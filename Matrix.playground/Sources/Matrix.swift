@@ -1,5 +1,4 @@
-// TODO: - Replace printing errors with throwing exceptions
-// TODO: - Add documentation to each method using markdown
+import Foundation
 
 // MARK: - MatrixType
 public enum MatrixType {
@@ -180,9 +179,62 @@ public class Matrix {
         return Matrix(elements: newMatrixElements)
     }
     
-    public func determinant() -> Double? {
+    func minor(for elements: [[Int]], excludingRow i: Int, andColumn j: Int) -> [[Int]]? {
+        guard i < elements.count, j < elements.count else {
+            return nil
+        }
+        
+        guard elements.count > 2 else {
+            return nil
+        }
+        
+        // Filter rows to exclude row with index that equals to i
+        var newElements = elements.enumerated().filter({ (rowIndex: Int, rowElements: [Int]) -> Bool in
+            return rowIndex != i
+        }).map({ (offset: Int, element: [Int]) -> [Int] in
+            return element
+        })
+        
+        // Iterate through all rows to filter elements inside
+        newElements.enumerated().forEach({ (rowIndex: Int, rowElements: [Int]) in
+            // Filter elements in each row to exlude element with index that equals to j
+            let filteredRowElements = rowElements.enumerated().filter({ (elementIndex: Int, element: Int) -> Bool in
+                return elementIndex != j
+            }).map({ (offset: Int, element: Int) -> Int in
+                return element
+            })
+            
+            newElements[rowIndex] = filteredRowElements
+        })
+        
+        return newElements
+    }
+    
+    func determinant(for elements: [[Int]]) -> Int {
+        switch elements.count {
+        case 0:
+            return 0
+        case 1:
+            return elements[0][0]
+        case 2:
+            return elements[0][0] * elements[1][1] - elements[0][1] * elements[1][0]
+        default:
+            var result = 0
+            
+            for (index, element) in elements.first!.enumerated() {
+                if let minor = minor(for: elements, excludingRow: 0, andColumn: index) {
+                    let sign = Int(pow(-1.0, Double(0 + index)))
+                    result += sign * element * determinant(for: minor)
+                }
+            }
+            
+            return result
+        }
+    }
+    
+    public func determinant() -> Int? {
         guard type == .square else { return nil }
         
-        return 0
+        return determinant(for: elements)
     }
 }

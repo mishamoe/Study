@@ -1,5 +1,3 @@
-//: Playground - noun: a place where people can play
-
 let matrix1 = Matrix(elements:
     [
         [1, 2, 3],
@@ -10,23 +8,31 @@ let matrix1 = Matrix(elements:
 
 let matrix2 = Matrix(elements:
     [
-        [1, 1, 1],
-        [0, 1, 0],
-        [0, 0, 1]
+        [1, 2, 3],
+        [0, 3, 4],
+        [4, 7, 9]
     ]
 )
 
 if let matrix1 = matrix1, let matrix2 = matrix2 {
-    print(matrix1.description())
-    print(matrix2.description())
+    // Adding
+    var newMatrix = matrix1.add(matrix: matrix2)
+    print(newMatrix?.description() ?? "")
     
-    print(matrix1.transponse().description())
+    // Multiplying by number
+    newMatrix = newMatrix?.multiply(by: 2)
+    print(newMatrix?.description() ?? "")
     
-    matrix1.addRow(row: [1, 2, 3, 4])
-    let newMatrix = matrix1.multiply(by: matrix1)
+    // Multiplying by Matrix
+    newMatrix = newMatrix?.multiply(by: matrix1)
+    print(newMatrix?.description() ?? "")
     
-    if let matrix = newMatrix {
-        print(matrix.description())
-        
-    }
+    // Transponse
+    newMatrix = newMatrix?.transponse()
+    print(newMatrix?.description() ?? "")
+    
+    // Determinant
+    let determinant = matrix2.determinant()
+    print(determinant)
 }
+
